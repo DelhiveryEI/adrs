@@ -1,0 +1,18 @@
+{
+    "contents" : "library(dplyr)\nadrs <- read.csv(\"dry_run_Aug_19.csv\",stringsAsFactors = F)\nadrs <- adrs %>% select(wbn,cust_add,address_input,lat,long) %>% unique()\nentities <- adrs %>% select(address_input,lat,long) %>% unique() %>% mutate(lat = round(lat,digits = 3), long= round(long,digits = 3)) %>% unique()\nentities %>% select(lat,long) %>% unique() %>% tally\nvrp_input <- adrs %>% select(wbn,address_input,lat,long) %>% mutate(id = 3000+1:nrow(adrs),clusterNo = 0, name = address_input, load = 1)\n\nlocation = list()\nfor(i in 1:10){\n  xx = list(id = vrp_input[i,\"id\"], clusterNo = vrp_input[i,\"clusterNo\"], name= vrp_input[i,\"name\"],lat = vrp_input[i,\"lat\"],lng = vrp_input[i,\"long\"],load = vrp_input[i,\"load\"])\n  location = c(location,list(xx))\n}\nvehicle = list(list(clusterNo = 0, name = \"KA_SOMETHING\",id = 6000, capacity = 999999999, baseLocation = 3000))\ndepot = list(list(id = 3000, name = \"StartPoint\", lat = 12.9367408, lng = 77.6242903, numVehicle = 1, location=location,vehicle=vehicle))\nreq <- list(uom = \"sec\",depot = depot, distanceType= \"air\",capacity = 999999999)\nlibrary(rjson)\nreqjson <- toJSON(req)\nwrite.csv(reqjson,\"request.json\",row.names = F,quote = F,col.names = NA)\nll <- read.csv(\"sample_lat_long.csv\",stringsAsFactors = F)\nll$rowid <- 1:nrow(ll)\nlibrary(leaflet)\nleaflet() %>% addTiles() %>% addMarkers(data = ll,lat = ~lat, lng = ~long) %>% addPopups(data = ll, lat = ~lat,lng = ~long,popup = ~as.character(rowid)) %>% addPolylines()",
+    "created" : 1471603884305.000,
+    "dirty" : true,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "3460705995",
+    "id" : "BA6476FB",
+    "lastKnownWriteTime" : 203118544,
+    "path" : null,
+    "project_path" : null,
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "type" : "r_source"
+}
